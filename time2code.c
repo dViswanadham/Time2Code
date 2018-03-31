@@ -168,7 +168,7 @@ int get_local_time(int town, int utc_month, int utc_day, int utc_time) {
 #define TOWN_WELLINGTON     13    
     
   /*  if (town == TOWN_ADELAIDE && utc_month == 1 && utc_day == 1 && utc_time == // what to put here?) {
-        
+        // also- decrease "if" statement length
     }
  */   
     return utc_time + TIMEZONE_AEDT_OFFSET;
