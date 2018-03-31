@@ -1,9 +1,9 @@
 // time2code.c
 // Assignment 1, COMP1511 18s1: Time To Code.
 //
-// This program by Dheeraj Viswanadham (z5204820) on Start: 27/03/18 | Last edited: 27/03/18
+// This program by Dheeraj Viswanadham (z5204820) on Start: 27/03/18 | Last edited: 31/03/18
 //
-// Version 1.0.2: Add version numbers and header comment.
+// Version 1.0.2: Add version numbers and header comment. Version update: 28/03/18
 // Version 1.0.1: Fix day/time variable mix-up in main function.
 // Version 1.0.0: Assignment released.
 
@@ -149,6 +149,28 @@ int get_local_time(int town, int utc_month, int utc_day, int utc_time) {
     // CHANGE THIS FUNCTION
     // YOU ARE NOT PERMITTED TO USE ARRAYS, LOOPS, PRINTF OR SCANF
     // SEE THE ASSIGNMENT SPECIFICATION FOR MORE RESTRICTIONS
+#define TOWN_ADELAIDE       0
+#define TOWN_BRISBANE       1
+#define TOWN_BROKEN_HILL    2
+#define TOWN_CANBERRA       3
+#define TOWN_DARWIN         4
+#define TOWN_EUCLA          5
+#define TOWN_HOBART         6
+#define TOWN_LORD_HOWE_IS   7
+#define TOWN_MELBOURNE      8
+#define TOWN_PERTH          9
+#define TOWN_SYDNEY         10
+
+// New Zealand
+
+#define TOWN_AUCKLAND       11
+#define TOWN_CHRISTCHURCH   12
+#define TOWN_WELLINGTON     13    
+    
+  /*  if (town == TOWN_ADELAIDE && utc_month == 1 && utc_day == 1 && utc_time == // what to put here?) {
+        
+    }
+ */   
     return utc_time + TIMEZONE_AEDT_OFFSET;
 }
 
