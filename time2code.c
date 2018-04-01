@@ -1,7 +1,7 @@
 // time2code.c
 // Assignment 1, COMP1511 18s1: Time To Code.
 //
-// This program by Dheeraj Viswanadham (z5204820) on Start: 27/03/18 | Last edited: 31/03/18
+// This program by Dheeraj Viswanadham (z5204820) on Start: 27/03/18 | Last edited: 1/04/18
 //
 // Version 1.0.2: Add version numbers and header comment. Version update: 28/03/18
 // Version 1.0.1: Fix day/time variable mix-up in main function.
@@ -12,42 +12,53 @@
 
 // You must use these #defines - DO NOT CHANGE THEM
 
-#define TOWN_ADELAIDE       0
-#define TOWN_BRISBANE       1
-#define TOWN_BROKEN_HILL    2
-#define TOWN_CANBERRA       3
-#define TOWN_DARWIN         4
-#define TOWN_EUCLA          5
-#define TOWN_HOBART         6
-#define TOWN_LORD_HOWE_IS   7
-#define TOWN_MELBOURNE      8
-#define TOWN_PERTH          9
-#define TOWN_SYDNEY         10
+#define TOWN_ADELAIDE       0  // ACDT 
+#define TOWN_BRISBANE       1  // Daylight savings not observed i.e. only AEST
+#define TOWN_BROKEN_HILL    2  // ACDT
+#define TOWN_CANBERRA       3  // AEDT
+#define TOWN_DARWIN         4  // Daylight savings not observed i.e. only ACST
+#define TOWN_EUCLA          5  // Daylight savings not boserved i.e. only ACWST
+#define TOWN_HOBART         6  // AEDT
+#define TOWN_LORD_HOWE_IS   7  // LHDT
+#define TOWN_MELBOURNE      8  // AEDT
+#define TOWN_PERTH          9  // Daylight savings not observed i.e. AWST
+#define TOWN_SYDNEY         10  // AEDT
 
 // New Zealand
 
-#define TOWN_AUCKLAND       11
-#define TOWN_CHRISTCHURCH   12
-#define TOWN_WELLINGTON     13
+#define TOWN_AUCKLAND       11  // NZDT
+#define TOWN_CHRISTCHURCH   12  // NZDT
+#define TOWN_WELLINGTON     13  // NZDT
 
-// Australia
+// Australia- Daylight savings starts 1/10/17 (October) at 2am i.e. 158, 159, 300
+//            and it ends on 1/04/18 (April) at 2am i.e. 158, 159, 100. 
+//            It then starts again on 7/10/18 at 2am finishing on 7/04/19 at 2am.             
+// I.e. When local daylight time was about to reach
+// Sunday, 1 April 2018, 3:00:00 am clocks were turned backward 1 hour to 
+// Sunday, 1 April 2018, 2:00:00 am local standard time instead.
 
 #define TIMEZONE_AWST_OFFSET  800 // Australian Western Standard Time
 
 #define TIMEZONE_ACWST_OFFSET 845 // Australian Central Western Standard Time
 
 #define TIMEZONE_ACST_OFFSET  930 // Australian Central Standard Time
-#define TIMEZONE_ACDT_OFFSET 1030 // Australian Central Daylight Time
+#define TIMEZONE_ACDT_OFFSET 1030 // Australian Central Daylight Time i.e. +1hr 
 
 #define TIMEZONE_AEST_OFFSET 1000 // Australian Eastern Standard Time
-#define TIMEZONE_AEDT_OFFSET 1100 // Australian Eastern Daylight Time
+#define TIMEZONE_AEDT_OFFSET 1100 // Australian Eastern Daylight Time i.e. +1hr
 
 #define TIMEZONE_LHST_OFFSET 1030 // Lord Howe Standard Time
-#define TIMEZONE_LHDT_OFFSET 1100 // Lord Howe Daylight Time
+#define TIMEZONE_LHDT_OFFSET 1100 // Lord Howe Daylight Time i.e. +30mins
 
-// New Zealand
+// New Zealand Daylight savings starts 24/09/17 (October) at 2am i.e. 158, 159, 300
+//            and it ends on 1/04/18 (April) at 2am i.e. 158, 159, 100. 
+//            It then starts again on 30/09/18 at 2am finishing on 7/04/19 at 2am.
+// I.e. When local daylight time was about to reach
+// Sunday, 1 April 2018, 3:00:00 am clocks were turned backward 1 hour to 
+// Sunday, 1 April 2018, 2:00:00 am local standard time instead.
+
 #define TIMEZONE_NZST_OFFSET 1200 // NZ Standard Time
-#define TIMEZONE_NZDT_OFFSET 1300 // NZ Daylight Time
+#define TIMEZONE_NZDT_OFFSET 1300 // NZ Daylight Time i.e. +1hr
 
 // returned by get_local_time
 #define INVALID_INPUT (-1)
