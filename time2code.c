@@ -1,9 +1,10 @@
 // time2code.c
 // Assignment 1, COMP1511 18s1: Time To Code.
 //
-// This program by Dheeraj Viswanadham (z5204820) on Start: 27/03/18 | Last edited: 1/04/18
-//
-// Version 1.0.2: Add version numbers and header comment. Version update: 28/03/18
+// This program by Dheeraj Viswanadham (z5204820) 
+// Start: 27/03/18 | Last edited: 1/04/18
+// Version update: 28/03/18
+// Version 1.0.2: Add version numbers and header comment. 
 // Version 1.0.1: Fix day/time variable mix-up in main function.
 // Version 1.0.0: Assignment released.
 
@@ -65,6 +66,15 @@
 
 
 // ADD YOUR #defines (if any) here
+#define MAX_DAYS_FEB 28 // February
+#define MAX_DAYS_APR_JUN_SEP_NOV 30 // April+June+September+November
+#define MAX_DAYS_GENERAL 31 // Jan+Mar+May+Jul+Aug+Oct+Dec
+
+#define MIN_DAYS 1
+#define MIN_TIME 0
+#define MAX_TIME 2359
+#define HOUR 100
+#define DAY 2400
 
 int get_local_time(int town, int utc_month, int utc_day, int utc_time);
 void run_unit_tests(void);
