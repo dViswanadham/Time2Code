@@ -66,22 +66,45 @@
 
 
 // ADD YOUR #defines (if any) here
+
+#define N_TOWN 14
+
+#define JAN 1
+#define FEB 2
+#define MAR 3
+#define APR 4
+#define MAY 5
+#define JUN 6
+#define JUL 7
+#define AUG 8
+#define SEP 9
+#define OCT 10
+#define NOV 11
+#define DEC 12
+
+#define MIN_DAYS 1
 #define MAX_DAYS_FEB 28 // February
 #define MAX_DAYS_APR_JUN_SEP_NOV 30 // April+June+September+November
 #define MAX_DAYS_GENERAL 31 // Jan+Mar+May+Jul+Aug+Oct+Dec
 
-#define MIN_DAYS 1
 #define MIN_TIME 0
 #define MAX_TIME 2359
 #define HOUR 100
 #define DAY 2400
+#define MAX_MINUTE 59
+
+
+
 
 int get_local_time(int town, int utc_month, int utc_day, int utc_time);
 void run_unit_tests(void);
 
 
 // ADD PROTOTYPES FOR YOUR FUNCTIONS HERE
-
+int call_town(void);
+int call_utc_month_day(void);
+int calc_utc_time(void);
+int calc_local_time(void);
 
 
 // DO NOT CHANGE THIS FUNCTION
@@ -170,35 +193,140 @@ int get_local_time(int town, int utc_month, int utc_day, int utc_time) {
     // CHANGE THIS FUNCTION
     // YOU ARE NOT PERMITTED TO USE ARRAYS, LOOPS, PRINTF OR SCANF
     // SEE THE ASSIGNMENT SPECIFICATION FOR MORE RESTRICTIONS
-#define TOWN_ADELAIDE       0
-#define TOWN_BRISBANE       1
-#define TOWN_BROKEN_HILL    2
-#define TOWN_CANBERRA       3
-#define TOWN_DARWIN         4
-#define TOWN_EUCLA          5
-#define TOWN_HOBART         6
-#define TOWN_LORD_HOWE_IS   7
-#define TOWN_MELBOURNE      8
-#define TOWN_PERTH          9
-#define TOWN_SYDNEY         10
-
-// New Zealand
-
-#define TOWN_AUCKLAND       11
-#define TOWN_CHRISTCHURCH   12
-#define TOWN_WELLINGTON     13    
-    
-  /*  if (town == TOWN_ADELAIDE && utc_month == 1 && utc_day == 1 && utc_time == // what to put here?) {
-        // also- decrease "if" statement length
-    }
- */   
-    return utc_time + TIMEZONE_AEDT_OFFSET;
+	
+	
+	
+	
+    return local_time;
 }
 
 
 // ADD YOUR FUNCTIONS HERE
 
+// Testing for INVALID_INPUT within the functions:
+int call_town(void) {
+	int town;
+	
+	if (town < 0 || town >= N_TOWN) {
+	    return INVALID_INPUT;
+	}
+}
 
+int call_utc_month_day(void) {
+	int utc_month;
+	int utc_day;
+	
+	if (utc_month == JAN || utc_month == MAR || utc_month == MAY || 
+		utc_month == JUL || utc_month == AUG || utc_month == OCT || 
+		utc_month == DEC) {
+		if (utc_day < MIN_DAYS || utc_day > MAX_DAYS_GENERAL) {
+			return INVALID_INPUT;
+		}
+	}
+	else if (utc_month == FEB) {
+		if (utc_day < MIN_DAYS || utc_day > MAX_DAYS_FEB) {
+			return INVALID_INPUT;
+		}
+	}
+	else if (utc_month == APR || utc_month == JUN || utc_month == SEP || 
+			utc_month == NOV) {
+		if (utc_day < MIN_DAYS || utc_day > MAX_DAYS_APR_JUN_SEP_NOV) {
+			return INVALID_INPUT;
+		}
+	}
+}
+
+int calc_utc_time(void) {
+	int utc_time;
+	int utc_hour = utc_time/HOUR;
+	int utc_minute = utc_time%HOUR;
+	
+	if (utc_time < MIN_TIME || utc_time > MAX_TIME || utc_minute > MAX_MINUTE) {
+		return INVALID_INPUT;
+	}
+	else {
+		return utc_time;
+	}
+}
+
+#define TOWN_ADELAIDE       0  // ACDT 
+#define TOWN_BRISBANE       1  // Daylight savings not observed i.e. only AEST
+#define TOWN_BROKEN_HILL    2  // ACDT
+#define TOWN_CANBERRA       3  // AEDT
+#define TOWN_DARWIN         4  // Daylight savings not observed i.e. only ACST
+#define TOWN_EUCLA          5  // Daylight savings not boserved i.e. only ACWST
+#define TOWN_HOBART         6  // AEDT
+#define TOWN_LORD_HOWE_IS   7  // LHDT
+#define TOWN_MELBOURNE      8  // AEDT
+#define TOWN_PERTH          9  // Daylight savings not observed i.e. AWST
+#define TOWN_SYDNEY         10  // AEDT
+
+// New Zealand
+
+#define TOWN_AUCKLAND       11  // NZDT
+#define TOWN_CHRISTCHURCH   12  // NZDT
+#define TOWN_WELLINGTON     13  // NZDT
+
+// Australia- Daylight savings starts 1/10/17 (October) at 2am i.e. 158, 159, 300
+//            and it ends on 1/04/18 (April) at 2am i.e. 158, 159, 100. 
+//            It then starts again on 7/10/18 at 2am finishing on 7/04/19 at 2am.             
+// I.e. When local daylight time was about to reach
+// Sunday, 1 April 2018, 3:00:00 am clocks were turned backward 1 hour to 
+// Sunday, 1 April 2018, 2:00:00 am local standard time instead.
+
+#define TIMEZONE_AWST_OFFSET  800 // Australian Western Standard Time
+
+#define TIMEZONE_ACWST_OFFSET 845 // Australian Central Western Standard Time
+
+#define TIMEZONE_ACST_OFFSET  930 // Australian Central Standard Time
+#define TIMEZONE_ACDT_OFFSET 1030 // Australian Central Daylight Time i.e. +1hr 
+
+#define TIMEZONE_AEST_OFFSET 1000 // Australian Eastern Standard Time
+#define TIMEZONE_AEDT_OFFSET 1100 // Australian Eastern Daylight Time i.e. +1hr
+
+#define TIMEZONE_LHST_OFFSET 1030 // Lord Howe Standard Time
+#define TIMEZONE_LHDT_OFFSET 1100 // Lord Howe Daylight Time i.e. +30mins
+
+// New Zealand Daylight savings starts 24/09/17 (October) at 2am i.e. 158, 159, 300
+//            and it ends on 1/04/18 (April) at 2am i.e. 158, 159, 100. 
+//            It then starts again on 30/09/18 at 2am finishing on 7/04/19 at 2am.
+// I.e. When local daylight time was about to reach
+// Sunday, 1 April 2018, 3:00:00 am clocks were turned backward 1 hour to 
+// Sunday, 1 April 2018, 2:00:00 am local standard time instead.
+
+#define TIMEZONE_NZST_OFFSET 1200 // NZ Standard Time
+#define TIMEZONE_NZDT_OFFSET 1300 // NZ Daylight Time i.e. +1hr
+
+int calc_local_time(void) {
+	int utc_month;
+	int utc_time = calc_utc_time();
+	
+	if ((town == TOWN_ADELAIDE) && (utc_month >= MAR && (utc_day == MAX_DAYS_GENERAL) && (utc_hour >= 17) && (utc_minute >= MIN_TIME)) { // consider edge cases
+		return utc_time + (replace this);
+	
+	}
+	else {
+		return INVALID_INPUT;
+	}
+}
+	
+	
+		// Australia- Daylight savings starts 1/10/17 (October) at 2am i.e. 158, 159, 300
+		//            and it ends on 1/04/18 (April) at 2am i.e. 158, 159, 100. 
+		//            It then starts again on 7/10/18 at 2am finishing on 7/04/19 at 2am.             
+		// I.e. When local daylight time was about to reach
+		// Sunday, 1 April 2018, 3:00:00 am clocks were turned backward 1 hour to 
+		// Sunday, 1 April 2018, 2:00:00 am local standard time instead.
+		
+		// New Zealand Daylight savings starts 24/09/17 (October) at 2am i.e. 158, 159, 300
+		//            and it ends on 1/04/18 (April) at 2am i.e. 158, 159, 100. 
+		//            It then starts again on 30/09/18 at 2am finishing on 7/04/19 at 2am.
+		// I.e. When local daylight time was about to reach
+		// Sunday, 1 April 2018, 3:00:00 am clocks were turned backward 1 hour to 
+		// Sunday, 1 April 2018, 2:00:00 am local standard time instead.
+	
+	if ((utc_month == APR) && 
+	
 // ADD A COMMENT HERE EXPLAINING YOUR OVERALL TESTING STRATEGY
 
 // run unit tests for get_local_time
