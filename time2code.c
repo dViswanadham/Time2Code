@@ -217,57 +217,40 @@ int get_local_time(int town, int utc_month, int utc_day, int utc_time) {
 // ADD YOUR FUNCTIONS HERE
 
 // Testing for INVALID_INPUT within the functions:
-int call_town(int town) {
+int call_invalid(int town, int utc_month, int utc_day, int utc_time) {
+	int output = 0;
+	int utc_hour = utc_time/HOUR;
+	int utc_minute = utc_time%HOUR;
 	
 	if (town < 0 || town >= N_TOWN) {
-	    town == INVALID_INPUT;
+	    output == INVALID_INPUT;
 	}
-	return town;
-}
-
-int call_utc_month(int utc_month) {
-	
-	if (utc_month < JAN || utc_month > DEC) {
-		utc_month == INVALID_INPUT;
+	else if (utc_month < JAN || utc_month > DEC) {
+		output == INVALID_INPUT;
 	}
-	return utc_month;
-}
-
-int call_utc_day(int utc_day) {
-    int month = 0;
-	int utc_month = call_utc_month(month);
-	
-		if (utc_month == JAN || utc_month == MAR || utc_month == MAY || 
-		utc_month == JUL || utc_month == AUG || utc_month == OCT || 
-		utc_month == DEC) {
+	else if (utc_month == JAN || utc_month == MAR || utc_month == MAY 
+	|| utc_month == JUL || utc_month == AUG || utc_month == OCT 
+	|| utc_month == DEC) {
 		if (utc_day < MIN_DAYS || utc_day > MAX_DAYS_GENERAL) {
-			utc_day == INVALID_INPUT;
+			output == INVALID_INPUT;
 		}
 	}
 	else if (utc_month == FEB) {
 		if (utc_day < MIN_DAYS || utc_day > MAX_DAYS_FEB) {
-			utc_day == INVALID_INPUT;
+			output == INVALID_INPUT;
 		}
 	}
-	else if (utc_month == APR || utc_month == JUN || utc_month == SEP || 
-			utc_month == NOV) {
+	else if (utc_month == APR || utc_month == JUN || utc_month == SEP 
+	|| utc_month == NOV) {
 		if (utc_day < MIN_DAYS || utc_day > MAX_DAYS_APR_JUN_SEP_NOV) {
-			utc_day == INVALID_INPUT;
+			output == INVALID_INPUT;
 		}
 	}
-	return utc_day;
-}
-
-int calc_utc_time(int utc_time) {
-	int utc_hour = utc_time/HOUR;
-	int utc_minute = utc_time%HOUR;
-	
-	if (utc_time < MIN_TIME || utc_time > MAX_TIME || utc_minute > MAX_MINUTE ||
-		utc_hour >= INVALID_HOUR) {
-			
-		utc_time == INVALID_INPUT;
+	else if (utc_time < MIN_TIME || utc_time > MAX_TIME 
+	|| utc_minute > MAX_MINUTE || utc_hour >= INVALID_HOUR) {
+		output == INVALID_INPUT;
 	}
-	return utc_time;
+	return output;
 }
 
 int calc_local_time(int local_time) {
@@ -493,11 +476,23 @@ int calc_local_time(int local_time) {
 		return INVALID_INPUT;
 	}
 	
+	if (local_time > MAX_TIME) {
+		local_time = (local_time % DAY);
+	}
 	return local_time;
 }
 
 // ADD A COMMENT HERE EXPLAINING YOUR OVERALL TESTING STRATEGY 
 
+// I first decided to draw out a tree diagram with several sub-functions acting
+// out as branches. I then determined what an invalid input would be for within 
+// each sub-function (such as towns, months, days, etc) and then called these
+// sub-functions into a larger calc_local_time function in order to calculate 
+// what the local time would be and whether daylight savings applied for that
+// given town and time. The below assert cases determine the edge cases for each
+// town (if they had DST applied or not) and tested whether they outputted the
+// correct times or not, which I double-checked with valid and reliable 
+// sources online. 
 
 // run unit tests for get_local_time
 
