@@ -253,11 +253,13 @@ int calc_local_timezone(int town) {
 
 // Australian towns:
 	// Town = Adelaide/Broken Hill/Darwin:
-	if (town == TOWN_ADELAIDE || town == TOWN_BROKEN_HILL || town == TOWN_DARWIN) {
+	if (town == TOWN_ADELAIDE || town == TOWN_BROKEN_HILL 
+	|| town == TOWN_DARWIN) {
 		tz_offset = TIMEZONE_ACST_OFFSET;
 	}
 	// Town = Brisbane/Canberra/Hobart/Melbourne/Sydney:
-	else if (town == TOWN_BRISBANE || town == TOWN_CANBERRA || town == TOWN_HOBART || town == TOWN_MELBOURNE || town == TOWN_SYDNEY) {
+	else if (town == TOWN_BRISBANE || town == TOWN_CANBERRA 
+	|| town == TOWN_HOBART || town == TOWN_MELBOURNE || town == TOWN_SYDNEY) {
 		tz_offset = TIMEZONE_AEST_OFFSET;
 	}
 	// Town = Eucla:
