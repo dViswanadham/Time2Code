@@ -110,10 +110,7 @@ void run_unit_tests(void);
 
 
 // ADD PROTOTYPES FOR YOUR FUNCTIONS HERE
-int call_town(int town);
-int call_utc_month(int utc_month);
-int call_utc_day(int utc_day);
-int calc_utc_time(int utc_time);
+int call_invalid(int town, int utc_month, int utc_day, int utc_time);
 int calc_local_time(int local_time);
 
 
