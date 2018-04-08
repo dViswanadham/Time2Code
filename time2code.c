@@ -111,7 +111,7 @@ void run_unit_tests(void);
 
 // ADD PROTOTYPES FOR YOUR FUNCTIONS HERE
 int call_invalid(int town, int utc_month, int utc_day, int utc_time);
-int calc_local_time(int local_time);
+int calc_local_timezone(int town);
 
 
 // DO NOT CHANGE THIS FUNCTION
@@ -197,12 +197,10 @@ int main(void) {
 //
 
 int get_local_time(int town, int utc_month, int utc_day, int utc_time) {
-    int time = 0;
-    int local_time = calc_local_time(time);
 	
-	// CHANGE THIS FUNCTION
-    // YOU ARE NOT PERMITTED TO USE ARRAYS, LOOPS, PRINTF OR SCANF
-    // SEE THE ASSIGNMENT SPECIFICATION FOR MORE RESTRICTIONS
+	if (call_invalid(town, utc_month, utc_day, utc_time) == INVALID_INPUT) {
+		local_time == INVALID_INPUT;
+	}
 	
 	
 	
@@ -250,19 +248,43 @@ int call_invalid(int town, int utc_month, int utc_day, int utc_time) {
 	return output;
 }
 
-int calc_local_time(int local_time) {
-    int month = 0, day = 0, time = 0, utc_town = 0;
-	int town = call_town(utc_town);
-	int utc_month = call_utc_month(month);
-	int utc_day = call_utc_day(day);
-	int utc_time = calc_utc_time(time);
+int calc_local_timezone(int town) {
+	int tz_offset = 0;
 
 // Australian towns:
-	// Town = Adelaide/Broken Hill:
-	if (town == TOWN_ADELAIDE || town == TOWN_BROKEN_HILL) {
-		if (utc_month < MAR) {
-			local_time = utc_time + TIMEZONE_ACDT_OFFSET;
-		}
+	// Town = Adelaide/Broken Hill/Darwin:
+	if (town == TOWN_ADELAIDE || town == TOWN_BROKEN_HILL || town == TOWN_DARWIN) {
+		tz_offset = TIMEZONE_ACST_OFFSET;
+	}
+	// Town = Brisbane/Canberra/Hobart/Melbourne/Sydney:
+	else if (town == TOWN_BRISBANE || town == TOWN_CANBERRA || town == TOWN_HOBART || town == TOWN_MELBOURNE || town == TOWN_SYDNEY) {
+		tz_offset = TIMEZONE_AEST_OFFSET;
+	}
+	// Town = Eucla:
+	else if (town == TOWN_EUCLA) {
+		tz_offset = TIMEZONE_ACWST_OFFSET;
+	}
+	// Town = Lord Howe Island:
+	else if (town == TOWN_LORD_HOWE_IS) {
+		tz_offset = TIMEZONE_LHST_OFFSET;
+	}
+	// Town = Perth:
+	else if (town == TOWN_PERTH) {
+		tz_offset = TIMEZONE_AWST_OFFSET;
+	}
+// New Zealand towns:
+	// Town = Auckland/Christchurch/Wellington:
+	else if (town == TOWN_AUCKLAND || town == TOWN_CHRISTCHURCH 
+	|| town == TOWN_WELLINGTON) {
+		tz_offset = TIMEZONE_NZST_OFFSET;
+	}
+	
+	return tz_offset;
+}
+	
+		
+		
+		
 		// consider edge cases
 		else if (utc_month == MAR) {
 			if ((utc_day == MAX_DAYS_GENERAL) && (utc_time >= UTC_ACST_START)) { 
