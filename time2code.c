@@ -214,6 +214,7 @@ int main(void) {
 int get_local_time(int town, int utc_month, int utc_day, int utc_time) {
 	
 	if (call_invalid(town, utc_month, utc_day, utc_time) == INVALID_INPUT) {
+	
 		return INVALID_INPUT;
 	}
 
@@ -237,8 +238,7 @@ int call_invalid(int town, int utc_month, int utc_day, int utc_time) {
 		
 	    output = INVALID_INPUT;
 		
-	} else if (utc_month < JAN 
-	|| utc_month > DEC) {
+	} else if (utc_month < JAN || utc_month > DEC) {
 		
 		output = INVALID_INPUT;
 		
