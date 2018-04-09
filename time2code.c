@@ -230,77 +230,89 @@ int get_local_time(int town, int utc_month, int utc_day, int utc_time) {
 // Testing for INVALID_INPUT within the functions:
 int call_invalid(int town, int utc_month, int utc_day, int utc_time) {
 	int output = 0;
-	int utc_hour = utc_time/HOUR;
-	int utc_minute = utc_time%HOUR;
+	int utc_hour = (utc_time / HOUR);
+	int utc_minute = (utc_time % HOUR);
 	
 	if (town < 0 || town >= N_TOWN) {
+		
 	    output = INVALID_INPUT;
-	}
-	else if (utc_month < JAN || utc_month > DEC) {
+		
+	} else if (utc_month < JAN 
+	|| utc_month > DEC) {
+		
 		output = INVALID_INPUT;
-	}
-	else if (utc_month == JAN || utc_month == MAR || utc_month == MAY 
+		
+	} else if (utc_month == JAN || utc_month == MAR || utc_month == MAY 
 	|| utc_month == JUL || utc_month == AUG || utc_month == OCT 
 	|| utc_month == DEC) {
 		if (utc_day < MIN_DAYS || utc_day > MAX_DAYS_GENERAL) {
+			
 			output = INVALID_INPUT;
 		}
-	}
-	else if (utc_month == FEB) {
+	} else if (utc_month == FEB) {
 		if (utc_day < MIN_DAYS || utc_day > MAX_DAYS_FEB) {
+			
 			output = INVALID_INPUT;
 		}
-	}
-	else if (utc_month == APR || utc_month == JUN || utc_month == SEP 
+	} else if (utc_month == APR || utc_month == JUN || utc_month == SEP 
 	|| utc_month == NOV) {
 		if (utc_day < MIN_DAYS || utc_day > MAX_DAYS_APR_JUN_SEP_NOV) {
+			
 			output = INVALID_INPUT;
 		}
-	}
-	else if (utc_time < MIN_TIME || utc_time > MAX_TIME 
+	} else if (utc_time < MIN_TIME || utc_time > MAX_TIME 
 	|| utc_minute > MAX_MINUTE || utc_hour >= INVALID_HOUR) {
 		
 		output = INVALID_INPUT;
 	}
+	
 	return output;
 }
 
+// Determines the standard timezone for each town
 int calc_local_timezone(int town) {
 	int tz_offset = 0;
 
 // Australian towns:
-	// Town = Adelaide/Broken Hill/Darwin:
+// Town = Adelaide/Broken Hill/Darwin 
 	if (town == TOWN_ADELAIDE || town == TOWN_BROKEN_HILL 
 	|| town == TOWN_DARWIN) {
+		
 		tz_offset = TIMEZONE_ACST_OFFSET;
-	}
-	// Town = Brisbane/Canberra/Hobart/Melbourne/Sydney:
-	else if (town == TOWN_BRISBANE || town == TOWN_CANBERRA 
+		
+// Town = Brisbane/Canberra/Hobart/Melbourne/Sydney		
+	} else if (town == TOWN_BRISBANE || town == TOWN_CANBERRA 
 	|| town == TOWN_HOBART || town == TOWN_MELBOURNE || town == TOWN_SYDNEY) {
+		
 		tz_offset = TIMEZONE_AEST_OFFSET;
-	}
-	// Town = Eucla:
-	else if (town == TOWN_EUCLA) {
-		tz_offset = TIMEZONE_ACWST_OFFSET;
-	}
-	// Town = Lord Howe Island:
-	else if (town == TOWN_LORD_HOWE_IS) {
+		
+// Town = Eucla 
+	} else if (town == TOWN_EUCLA) {
+		
+		tz_offset = TIMEZONE_ACWST_OFFSET; 
+	
+// Town = Lord Howe Island 	
+	} else if (town == TOWN_LORD_HOWE_IS) {
+		
 		tz_offset = TIMEZONE_LHST_OFFSET;
-	}
-	// Town = Perth:
-	else if (town == TOWN_PERTH) {
+		
+// Town = Perth		
+	} else if (town == TOWN_PERTH) { 
+	
 		tz_offset = TIMEZONE_AWST_OFFSET;
-	}
-// New Zealand towns:
-	// Town = Auckland/Christchurch/Wellington:
-	else if (town == TOWN_AUCKLAND || town == TOWN_CHRISTCHURCH 
-	|| town == TOWN_WELLINGTON) {
+	
+// New Zealand towns: 
+// Town = Auckland/Christchurch/Wellington:
+	} else if (town == TOWN_AUCKLAND || town == TOWN_CHRISTCHURCH 
+	|| town == TOWN_WELLINGTON) { 
+	
 		tz_offset = TIMEZONE_NZST_OFFSET;
 	}
 	
 	return tz_offset;
 }
 
+// Determines whether month is during DST or not
 int calc_dst_time(int utc_month, int utc_day, int utc_time, int input_month, 
 int input_day, int input_time) {
 	
@@ -309,36 +321,38 @@ int input_day, int input_time) {
     int during_after_DST = 0; 
     
     if (utc_month < input_month) {
+		
         during_after_DST = DURINGDST;
-	}
-	
-    else if (utc_month > input_month) {
+		
+	} else if (utc_month > input_month) {
+		
         during_after_DST = AFTERDST;
-	}
-	
-    else if (utc_month == input_month) {
+		
+	} else if (utc_month == input_month) {
         if (utc_day < input_day) {
-            during_after_DST = DURINGDST;
-		}
-		
-        else if (utc_day > input_day) {
-            during_after_DST = AFTERDST;
-		}
-		
-        else if (utc_day == input_day) {
-            if (utc_time < input_time) {
-                during_after_DST = DURINGDST;
-			}
 			
-            else if (utc_time >= input_time) { 
+            during_after_DST = DURINGDST;
+			
+		} else if (utc_day > input_day) {
+			
+            during_after_DST = AFTERDST;
+			
+		} else if (utc_day == input_day) {
+            if (utc_time < input_time) {
+				
+                during_after_DST = DURINGDST;
+				
+			} else if (utc_time >= input_time) { 
+			
                 during_after_DST = AFTERDST;
             }
         }
     }
-    
+	
     return during_after_DST;
 }
 
+// Determines local timezone for the town depending on the town and month
 int call_dst(int town, int tz_town, int utc_month, int utc_day, int utc_time) { 
 
 // Considering the edge cases for DST:
@@ -346,30 +360,28 @@ int call_dst(int town, int tz_town, int utc_month, int utc_day, int utc_time) {
 		if (calc_dst_time(utc_month, utc_day, utc_time, MAR, MAX_DAYS_GENERAL, 
 		UTC_ACST_START) || 
 		!calc_dst_time(utc_month, utc_day, utc_time, OCT, 6, UTC_ACDT_START)) {
+			
 			tz_town = TIMEZONE_ACDT_OFFSET;
 		}
-	}
-	
-	else if ((tz_town == TIMEZONE_AEST_OFFSET) && (town != TOWN_BRISBANE)) {
+	} else if ((tz_town == TIMEZONE_AEST_OFFSET) && (town != TOWN_BRISBANE)) {
 		if (calc_dst_time(utc_month, utc_day, utc_time, MAR, MAX_DAYS_GENERAL, 
 		UTC_AEST_START) || 
 		!calc_dst_time(utc_month, utc_day, utc_time, OCT, 6, UTC_AEDT_START)) {
+			
             tz_town = TIMEZONE_AEDT_OFFSET;
         }
-	}
-	
-	else if (tz_town == TIMEZONE_LHST_OFFSET) {
+	} else if (tz_town == TIMEZONE_LHST_OFFSET) {
 		if (calc_dst_time(utc_month, utc_day, utc_time, MAR, MAX_DAYS_GENERAL, 
 		UTC_LHST_START) || 
 		!calc_dst_time(utc_month, utc_day, utc_time, OCT, 6, UTC_LHDT_START)) {
+			
             tz_town = TIMEZONE_LHDT_OFFSET;
         }
-	}
-    
-    else if (tz_town == TIMEZONE_NZST_OFFSET) {
+	} else if (tz_town == TIMEZONE_NZST_OFFSET) {
         if (calc_dst_time(utc_month, utc_day, utc_time, MAR, MAX_DAYS_GENERAL, 
 		UTC_NZST_START) || 
 		!calc_dst_time(utc_month, utc_day, utc_time, SEP, 29, UTC_NZDT_START)) {
+			
             tz_town = TIMEZONE_NZDT_OFFSET;
         }
     }
@@ -394,10 +406,11 @@ int calc_local_time(int utc_time, int local_offset) {
 	int local_time = (total_hrs + total_mins);
 	
 	if (utc_time >= DAY || utc_minute > MAX_MINUTE || utc_minute < MIN_TIME) {
+		
 		local_time = INVALID_INPUT;
-	}
+		
+	} else if (local_time >= DAY) { // If total time exceeds 2400 i.e. a day
 	
-    else if (local_time >= DAY) { // If total time exceeds 2400 i.e. a day
 		local_time = (local_time - DAY);
 	}
 	
