@@ -2,7 +2,7 @@
 // Assignment 1, COMP1511 18s1: Time To Code.
 //
 // This program by Dheeraj Viswanadham (z5204820) 
-// Start: 27/03/18 | Last edited: 8/04/18
+// Start: 27/03/18 | Last edited: 9/04/18
 // Version update: 28/03/18
 // Version 1.0.2: Add version numbers and header comment. 
 // Version 1.0.1: Fix day/time variable mix-up in main function.
@@ -66,21 +66,25 @@
 
 
 // ADD YOUR #defines (if any) here
+
+// Invalid town:
 #define N_TOWN 14
 
-#define UTC_ACDT_END 1529 // MAR 31
+// DST Start/End clarification:
+#define UTC_ACDT_END 1629 // MAR 31
 #define UTC_ACST_START 1630 // MAR 31
 #define UTC_ACDT_START 1630 	// OCT 6 
-#define UTC_AEDT_END 1459 // MAR 31
+#define UTC_AEDT_END 1559 // MAR 31
 #define UTC_AEST_START 1600 // MAR 31
 #define UTC_AEDT_START 1600 	// OCT 6 
 #define UTC_LHDT_END 1459 // MAR 31
 #define UTC_LHST_START 1500 // MAR 31
-#define UTC_LHDT_START 1600 	// OCT 6 
-#define UTC_NZDT_END 1259 // MAR 31
+#define UTC_LHDT_START 1530 	// OCT 6 
+#define UTC_NZDT_END 1359 // MAR 31
 #define UTC_NZST_START 1400 // MAR 31
 #define UTC_NZDT_START 1400 	// SEP 29
 
+// Months order:
 #define JAN 1
 #define FEB 2
 #define MAR 3
@@ -94,11 +98,13 @@
 #define NOV 11
 #define DEC 12
 
+// General day Information for each month:
 #define MIN_DAYS 1
 #define MAX_DAYS_FEB 28 // February
 #define MAX_DAYS_APR_JUN_SEP_NOV 30 // April+June+September+November
 #define MAX_DAYS_GENERAL 31 // Jan+Mar+May+Jul+Aug+Oct+Dec
 
+// General time information:
 #define MIN_TIME 0
 #define MAX_TIME 2359
 #define HOUR 100
@@ -107,6 +113,7 @@
 #define TOTAL_MIN 60
 #define INVALID_HOUR 24
 
+// #define for function calc_dst_time:
 #define AFTERDST 0
 #define DURINGDST 1
 
@@ -118,11 +125,10 @@ void run_unit_tests(void);
 // ADD PROTOTYPES FOR YOUR FUNCTIONS HERE
 int call_invalid(int town, int utc_month, int utc_day, int utc_time);
 int calc_local_timezone(int town);
-int call_dst(int town, int tz_town, int utc_month, int utc_day, int utc_time);
 int calc_dst_time(int utc_month, int utc_day, int utc_time, 
 int input_month, int input_day, int input_time);
+int call_dst(int town, int tz_town, int utc_month, int utc_day, int utc_time);
 int calc_local_time(int utc_time, int local_offset);
-
 
 // DO NOT CHANGE THIS FUNCTION
 
@@ -204,7 +210,6 @@ int main(void) {
 //
 // note UTC year is assumed to be 2018
 // note UTC seconds is assumed to be zero
-//
 
 int get_local_time(int town, int utc_month, int utc_day, int utc_time) {
 	
@@ -296,12 +301,50 @@ int calc_local_timezone(int town) {
 	return tz_offset;
 }
 
+int calc_dst_time(int utc_month, int utc_day, int utc_time, int input_month, 
+int input_day, int input_time) {
+	
+// Initialising a variable to act as a true/false pointer (i.e. Boolean) in 
+// order to determine whether the given month/day/time is during/after DST
+    int during_after_DST = 0; 
+    
+    if (utc_month < input_month) {
+        during_after_DST = DURINGDST;
+	}
+	
+    else if (utc_month > input_month) {
+        during_after_DST = AFTERDST;
+	}
+	
+    else if (utc_month == input_month) {
+        if (utc_day < input_day) {
+            during_after_DST = DURINGDST;
+		}
+		
+        else if (utc_day > input_day) {
+            during_after_DST = AFTERDST;
+		}
+		
+        else if (utc_day == input_day) {
+            if (utc_time < input_time) {
+                during_after_DST = DURINGDST;
+			}
+			
+            else if (utc_time >= input_time) { 
+                during_after_DST = AFTERDST;
+            }
+        }
+    }
+    
+    return during_after_DST;
+}
+
 int call_dst(int town, int tz_town, int utc_month, int utc_day, int utc_time) { 
 
 // Considering the edge cases for DST:
 	if ((tz_town == TIMEZONE_ACST_OFFSET) && (town != TOWN_DARWIN)) {
 		if (calc_dst_time(utc_month, utc_day, utc_time, MAR, MAX_DAYS_GENERAL, 
-		UTC_ACDT_END) || 
+		UTC_ACST_START) || 
 		!calc_dst_time(utc_month, utc_day, utc_time, OCT, 6, UTC_ACDT_START)) {
 			tz_town = TIMEZONE_ACDT_OFFSET;
 		}
@@ -309,7 +352,7 @@ int call_dst(int town, int tz_town, int utc_month, int utc_day, int utc_time) {
 	
 	else if ((tz_town == TIMEZONE_AEST_OFFSET) && (town != TOWN_BRISBANE)) {
 		if (calc_dst_time(utc_month, utc_day, utc_time, MAR, MAX_DAYS_GENERAL, 
-		UTC_AEDT_END) || 
+		UTC_AEST_START) || 
 		!calc_dst_time(utc_month, utc_day, utc_time, OCT, 6, UTC_AEDT_START)) {
             tz_town = TIMEZONE_AEDT_OFFSET;
         }
@@ -317,7 +360,7 @@ int call_dst(int town, int tz_town, int utc_month, int utc_day, int utc_time) {
 	
 	else if (tz_town == TIMEZONE_LHST_OFFSET) {
 		if (calc_dst_time(utc_month, utc_day, utc_time, MAR, MAX_DAYS_GENERAL, 
-		UTC_LHDT_END) || 
+		UTC_LHST_START) || 
 		!calc_dst_time(utc_month, utc_day, utc_time, OCT, 6, UTC_LHDT_START)) {
             tz_town = TIMEZONE_LHDT_OFFSET;
         }
@@ -325,7 +368,7 @@ int call_dst(int town, int tz_town, int utc_month, int utc_day, int utc_time) {
     
     else if (tz_town == TIMEZONE_NZST_OFFSET) {
         if (calc_dst_time(utc_month, utc_day, utc_time, MAR, MAX_DAYS_GENERAL, 
-		UTC_NZDT_END) || 
+		UTC_NZST_START) || 
 		!calc_dst_time(utc_month, utc_day, utc_time, SEP, 29, UTC_NZDT_START)) {
             tz_town = TIMEZONE_NZDT_OFFSET;
         }
@@ -334,44 +377,7 @@ int call_dst(int town, int tz_town, int utc_month, int utc_day, int utc_time) {
     return tz_town;
 }
 
-int calc_dst_time(int utc_month, int utc_day, int utc_time, int input_month, 
-int input_day, int input_time) {
-	
-// Initialising a variable to act as a true/false pointer (i.e. Boolean) in 
-// order to determine whether the given month/day/time is during/after DST
-    int pointer = 0; 
-    
-    if (utc_month < input_month) {
-        pointer = DURINGDST;
-	}
-	
-    else if (utc_month > input_month) {
-        pointer = AFTERDST;
-	}
-	
-    else if (utc_month == input_month) {
-        if (utc_day < input_day) {
-            pointer = DURINGDST;
-		}
-		
-        else if (utc_day > input_day) {
-            pointer = AFTERDST;
-		}
-		
-        else if (utc_day == input_day) {
-            if (utc_time < input_time) {
-                pointer = DURINGDST;
-			}
-			
-            else if (utc_time >= input_time) { 
-                pointer = AFTERDST;
-            }
-        }
-    }
-    
-    return pointer;
-}
-
+// Calculating time output:
 int calc_local_time(int utc_time, int local_offset) {
 	int utc_minute = (utc_time % HOUR); 
 	int local_minute = (local_offset % HOUR); 
@@ -387,7 +393,11 @@ int calc_local_time(int utc_time, int local_offset) {
 	
 	int local_time = (total_hrs + total_mins);
 	
-    if (local_time >= DAY) { 
+	if (utc_time >= DAY || utc_minute > MAX_MINUTE || utc_minute < MIN_TIME) {
+		local_time = INVALID_INPUT;
+	}
+	
+    else if (local_time >= DAY) { // If total time exceeds 2400 i.e. a day
 		local_time = (local_time - DAY);
 	}
 	
@@ -406,7 +416,9 @@ int calc_local_time(int utc_time, int local_offset) {
 // given town and time. The below assert cases determine the edge cases for each
 // town (if they had DST applied or not) and tested whether they outputted the
 // correct times or not, which I double-checked with valid and reliable 
-// sources online. 
+// sources online. Logic for testing the assert statements is provided above 
+// each statement and they were grouped within clear and logical parameters 
+// which were required for testing the program.
 
 // run unit tests for get_local_time
 
@@ -421,9 +433,136 @@ void run_unit_tests(void) {
 
     // ADD YOUR ASSERT STATEMENTS HERE
 
-    // you should add at least 40 more assert statements to this function
-    // with a comment for each test explaining it
+// Testing INVALID_INPUT for months JAN - DEC in statements #1 - #15
+// by inputting invalid months, days and times.
 
-    // there should be comment before this function
-    // explaining your overall testing strategy
+	// Australian towns:
+// 1 (invalid day)
+	assert(get_local_time(TOWN_ADELAIDE, JAN, 32, 0) == INVALID_INPUT);
+// 2 (invalid day)
+	assert(get_local_time(TOWN_ADELAIDE, FEB, 29, 1450) == INVALID_INPUT);
+// 3 (invalid time)
+	assert(get_local_time(TOWN_BRISBANE, MAR, 1, 2773) == INVALID_INPUT);
+// 4 (invalid day)
+	assert(get_local_time(TOWN_BROKEN_HILL, APR, 0, 0) == INVALID_INPUT);
+// 5 (invalid day)
+	assert(get_local_time(TOWN_CANBERRA, MAY, 0, 2230) == INVALID_INPUT);
+// 6 (invalid day)
+	assert(get_local_time(TOWN_DARWIN, JUN, 31, 0) == INVALID_INPUT);
+// 7 (invalid time)
+	assert(get_local_time(TOWN_EUCLA, JUL, 31, 2575) == INVALID_INPUT);
+// 8 (invalid time)
+	assert(get_local_time(TOWN_HOBART, AUG, 5, 2784) == INVALID_INPUT);
+// 9 (invalid day)
+	assert(get_local_time(TOWN_LORD_HOWE_IS, SEP, 31, 0) == INVALID_INPUT);
+// 10 (invalid day)
+	assert(get_local_time(TOWN_MELBOURNE, OCT, 0, 2272) == INVALID_INPUT);
+// 11 (invalid time as max time is 2359)
+	assert(get_local_time(TOWN_PERTH, NOV, 1, 2400) == INVALID_INPUT);
+// 12 (invalid day)
+	assert(get_local_time(TOWN_SYDNEY, DEC, 0, 0) == INVALID_INPUT);
+	
+	// New Zealand towns:
+// 13 (invalid time)
+	assert(get_local_time(TOWN_AUCKLAND, JAN, 24, 2373) == INVALID_INPUT);
+// 14 (invalid month)
+	assert(get_local_time(TOWN_CHRISTCHURCH, 0, 1, 1230) == INVALID_INPUT);
+// 15 (invalid month)
+	assert(get_local_time(TOWN_WELLINGTON, 13, 1, 1230) == INVALID_INPUT);
+	
+// Testing invalid towns (<0 and >13) in statements #16 and #17
+// 16
+	assert(get_local_time(-1, JAN, 24, 2359) == INVALID_INPUT);
+// 17
+	assert(get_local_time(N_TOWN, JAN, 24, 2359) == INVALID_INPUT);
+	
+// Testing valid inputs where a town has been selected from each timezone 
+// to test all possible cases!
+
+	// Testing time before DST ends on MARCH 31 (UST time) 
+	// for statements #18 - #21:
+// 18 
+	assert(get_local_time(TOWN_ADELAIDE, MAR, 20, 1200) == 2230);
+// 19
+	assert(get_local_time(TOWN_SYDNEY, MAR, 20, 1200) == 2300);
+// 20
+	assert(get_local_time(TOWN_LORD_HOWE_IS, MAR, 20, 1200) == 2300);
+// 21
+	assert(get_local_time(TOWN_CHRISTCHURCH, MAR, 20, 1200) == 100);
+	
+	// Testing time before DST starts on OCT 6 (AUS towns) and SEP 29 (NZ towns) 
+	// for statements #22 - #25:
+// 22
+	assert(get_local_time(TOWN_ADELAIDE, SEP, 20, 1200) == 2130);
+// 23
+	assert(get_local_time(TOWN_SYDNEY, SEP, 20, 1200) == 2200);
+// 24
+	assert(get_local_time(TOWN_LORD_HOWE_IS, SEP, 20, 1200) == 2230);
+// 25
+	assert(get_local_time(TOWN_CHRISTCHURCH, SEP, 20, 1200) == 0);
+	
+	// Testing time after DST starts on OCT 6 (AUS towns) and SEP 29 (NZ towns) 
+	// for statements #26 - #29:
+// 26
+	assert(get_local_time(TOWN_ADELAIDE, DEC, 20, 0) == 1030);
+// 27
+	assert(get_local_time(TOWN_SYDNEY, DEC, 20, 0) == 1100);
+// 28
+	assert(get_local_time(TOWN_LORD_HOWE_IS, DEC, 20, 0) == 1100);
+// 29
+	assert(get_local_time(TOWN_CHRISTCHURCH, DEC, 20, 0) == 1300);
+	
+	// Testing towns which don't have DST during the DST period before/after
+	// MAR 31/OCT 6 respectively: (statements #30 - #37)
+// 30
+	assert(get_local_time(TOWN_BRISBANE, MAR, 20, 0) == 1000);
+// 31
+	assert(get_local_time(TOWN_DARWIN, MAR, 20, 0) == 930);
+// 32
+	assert(get_local_time(TOWN_EUCLA, MAR, 20, 0) == 845);
+// 33
+	assert(get_local_time(TOWN_PERTH, MAR, 20, 0) == 800);
+// 34
+	assert(get_local_time(TOWN_BRISBANE, DEC, 20, 0) == 1000);
+// 35
+	assert(get_local_time(TOWN_DARWIN, DEC, 20, 0) == 930);
+// 36
+	assert(get_local_time(TOWN_EUCLA, DEC, 20, 0) == 845);
+// 37
+	assert(get_local_time(TOWN_PERTH, DEC, 20, 0) == 800);
+
+	// Testing on DST end/start times:
+	// DST end times: (statements #38 - #41)
+// 38
+	assert(get_local_time(TOWN_ADELAIDE, MAR, 31, 1629) == 259);
+// 39
+	assert(get_local_time(TOWN_SYDNEY, MAR, 31, 1559) == 259);
+// 40
+	assert(get_local_time(TOWN_LORD_HOWE_IS, MAR, 31, 1459) == 159);
+// 41
+	assert(get_local_time(TOWN_CHRISTCHURCH, MAR, 31, 1359) == 259);
+	
+	// DST end time + 1 minute (i.e. standard time beginning): (#42 - #45)
+// 42
+	assert(get_local_time(TOWN_ADELAIDE, MAR, 31, 1630) == 200);
+// 43
+	assert(get_local_time(TOWN_SYDNEY, MAR, 31, 1600) == 200);
+// 44
+	assert(get_local_time(TOWN_LORD_HOWE_IS, MAR, 31, 1500) == 130);
+// 45
+	assert(get_local_time(TOWN_CHRISTCHURCH, MAR, 31, 1400) == 200);
+
+	// DST start times: (statements #46 - #49)
+// 46
+	assert(get_local_time(TOWN_ADELAIDE, OCT, 6, 1630) == 300);
+// 47
+	assert(get_local_time(TOWN_SYDNEY, OCT, 6, 1600) == 300);
+// 48
+	assert(get_local_time(TOWN_LORD_HOWE_IS, OCT, 6, 1530) == 230);
+// 49
+	assert(get_local_time(TOWN_CHRISTCHURCH, SEP, 29, 1400) == 300);
+	
+	// Final check to test negative time:
+// 50
+	assert(get_local_time(TOWN_ADELAIDE, OCT, 6, -1630) == INVALID_INPUT);
 }
