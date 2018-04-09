@@ -218,9 +218,9 @@ int get_local_time(int town, int utc_month, int utc_day, int utc_time) {
 		return INVALID_INPUT;
 	}
 
-	int utc_offset = calc_local_timezone(town);
-	utc_offset = call_dst(town, utc_offset, utc_month, utc_day, utc_time);	
-	int local_time = calc_local_time(utc_time, utc_offset);
+	int time_offset = calc_local_timezone(town);
+	time_offset = call_dst(town, time_offset, utc_month, utc_day, utc_time);	
+	int local_time = calc_local_time(utc_time, time_offset);
 	
     return local_time;
 }
