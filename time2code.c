@@ -2,7 +2,7 @@
 // Assignment 1, COMP1511 18s1: Time To Code.
 //
 // This program by Dheeraj Viswanadham (z5204820) 
-// Start: 27/03/18 | Last edited: 9/04/18
+// Start: 27/03/18 | Last edited: 10/04/18
 // Version update: 28/03/18
 // Version 1.0.2: Add version numbers and header comment. 
 // Version 1.0.1: Fix day/time variable mix-up in main function.
@@ -213,16 +213,19 @@ int main(void) {
 
 int get_local_time(int town, int utc_month, int utc_day, int utc_time) {
 	
+	int time_offset = calc_local_timezone(town);
+	time_offset = call_dst(town, time_offset, utc_month, utc_day, utc_time);
+	int local_time = calc_local_time(utc_time, time_offset);    
+	
+	int val = 0;
+	val = local_time;
+    	
 	if (call_invalid(town, utc_month, utc_day, utc_time) == INVALID_INPUT) {
 	
-		return INVALID_INPUT;
+		val = INVALID_INPUT;
 	}
 
-	int time_offset = calc_local_timezone(town);
-	time_offset = call_dst(town, time_offset, utc_month, utc_day, utc_time);	
-	int local_time = calc_local_time(utc_time, time_offset);
-	
-    return local_time;
+    return val;
 }
 
 
@@ -394,10 +397,10 @@ int calc_local_time(int utc_time, int local_offset) {
 	int utc_minute = (utc_time % HOUR); 
 	int local_minute = (local_offset % HOUR); 
 	int total_minute = (utc_minute + local_minute); 
-	int additional_minute = (total_minute % TOTAL_MIN); 
-	
+	int additional_minute = (total_minute % TOTAL_MIN); // extra minutes carried
+	                                                    // over to next hour
 	int additional_hr = ((total_minute - additional_minute)/TOTAL_MIN); 
-	int utc_hr = (utc_time - utc_minute); 
+	int utc_hr = (utc_time - utc_minute); // to get the hour
 	int local_offset_hr = (local_offset - local_minute); 
 	
 	int total_hrs = (utc_hr + local_offset_hr + (additional_hr * HOUR)); 
